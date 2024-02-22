@@ -1,2 +1,2 @@
 # LetsEatMobile
-Aplikacja mobilna LetsEatAndroid
+Aplikacja mobilna LetsEat na Androida
