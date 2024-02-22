@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:id="@+id/restaurantPanelRestaurantPicture"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            tools:ignore="RtlSymmetry">
+
+            <!-- ImageView for displaying the restaurant image -->
+            <ImageView
+                android:id="@+id/restaurantImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+
+            <ImageButton
+                android:id="@+id/restaurantPanelReturnButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginVertical="8dp"
+                android:layout_marginLeft ="8dp"
+                android:background="@drawable/rounded_corner"
+                android:scaleType="fitCenter"
+                android:src="@drawable/baseline_chevron_left_24"
+                app:tint="@color/soft_black"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="531dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/restaurantPanelRestaurantName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingVertical="5dp"
+                android:text="Restaurant Name"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:src="@drawable/rounded_corner" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:id="@+id/restaurantPanelRestaurantStar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:text="stars"
+                    app:drawableLeftCompat="@drawable/baseline_star_24" />
+
+                <TextView
+                    android:id="@+id/restaurantPanelRestaurantDistance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:text="distance"
+                    app:drawableLeftCompat="@drawable/baseline_location_on_24" />
+
+                <TextView
+                    android:id="@+id/restaurantPanelRestaurantTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.8"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:text="Time"
+                    app:drawableLeftCompat="@drawable/baseline_access_time_24" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/restaurantPanelLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:paddingTop="10dp"
+                android:text="adress"
+                app:drawableLeftCompat="@drawable/baseline_map_24" />
+            <TextView
+                android:id="@+id/restaurantPanelWebsite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:paddingTop="10dp"
+                android:text="website"
+                android:layout_marginBottom="8dp"
+                app:drawableLeftCompat="@drawable/baseline_open_in_browser_24" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:src="@drawable/rounded_corner" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Menu: "
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/restaurantPanelMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Mistyczne Kapelusze Grzybów\n
+Galaktyczna Guacamole Mgławica\n
+Kwazarowe Popcorny z Quinoa\n
+Interstellarne Zupa Infuzji\n
+Nebularna Sałatka Odżywcza\n
+Czarne Tofu Tacos z Czarną Dziurą\n
+Kosmiczna Makaronowa Kometa Carbonara\n
+Miska Mocy z Quinoa\n
+" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:src="@drawable/rounded_corner" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_weight="3"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Oceny:"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/restaurantPanelFood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:text="4.4 / 5.0 "
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:drawableRightCompat="@drawable/baseline_star_24"
+                    />
+                <TextView
+                    android:id="@+id/restaurantPanelAtmosphere"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:text="4.4 / 5.0"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:drawableRightCompat="@drawable/baseline_star_24"
+                    />
+                <TextView
+                    android:id="@+id/restaurantPanelService"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:text="4.4 / 5.0"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:drawableRightCompat="@drawable/baseline_star_24"
+                    />
+
+                <ImageView
+                    android:layout_width="200dp"
+                    android:layout_height="3dp"
+
+                    android:layout_gravity="center"
+                    android:src="@drawable/rounded_corner" />
+
+                    <TextView
+                        android:id="@+id/restaurantPanelOpinion"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:text="Przykładowa opninia#1"
+                        android:paddingVertical="10dp"/>
+
+                <Button
+                    android:id="@+id/restaurantAddOpinion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Dodaj Swoją opinię"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

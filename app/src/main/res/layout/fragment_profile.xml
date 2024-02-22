@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Profile">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/helloText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text=" Hej, XYZ"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="48sp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/myProfileButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="Mój profil"
+            android:textAlignment="viewStart"
+            android:textSize="24sp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/accessPermissionsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="Uprawnienia Dostępu"
+            android:textAlignment="viewStart"
+            android:textSize="24sp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/HelpButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="Pomoc"
+            android:textAlignment="viewStart"
+            android:textSize="24sp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/signOutButton1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/lightGrey"
+            android:onClick="wyloguj"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="Wyloguj"
+            android:textColor="@color/Charcoal_Grey"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Chcesz Let’s Eat w swoim lokalu?"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="40sp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/joinLetsEat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/teal_200"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="Dołącz do lets eat"
+            android:textColor="@color/black"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+</FrameLayout>

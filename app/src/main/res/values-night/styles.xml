@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="customprogressbar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:indeterminateTint">@color/teal_300</item> <!-- Kolor animowanego efektu -->
+//        <item name="android:progressBackgroundTint">#00FFFFFF</item> <!-- Kolor tła -->
+        <item name="android:progressTint">@color/teal_200</item> <!-- Kolor paska postępu -->
+    </style>
+</resources>
