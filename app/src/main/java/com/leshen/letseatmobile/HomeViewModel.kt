@@ -1,9 +1,11 @@
 package com.leshen.letseatmobile
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leshen.letseatmobile.restaurantList.RestaurantListModel
 import kotlinx.coroutines.launch
@@ -12,7 +14,9 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val appContext: Context = application.applicationContext
 
     private val _restaurants = MutableLiveData<List<RestaurantListModel>>()
     val restaurants: LiveData<List<RestaurantListModel>> get() = _restaurants
@@ -31,11 +35,14 @@ class HomeViewModel : ViewModel() {
     init {
         updateLatitude(0.0)
         updateLongitude(0.0)
-        _selectedRange.value = 1.0f
-        fetchDataFromApi()
+        // Odczytaj ostatnio wybraną wartość zasięgu z SharedPreferences
+        val sharedPreferences = appContext.getSharedPreferences("RangeSelectorPrefs", Context.MODE_PRIVATE)
+        val lastSelectedRange = sharedPreferences.getFloat("lastSelectedRange", 1.0f)
+        _selectedRange.value = lastSelectedRange
+        fetchDataFromApi() // Wywołujemy metodę fetchDataFromApi() w konstruktorze, aby od razu pobrać dane przy uruchomieniu aplikacji
     }
 
-    fun fetchDataFromApi() {
+    fun fetchDataFromApi() { // Oznaczamy metodę jako publiczną
         viewModelScope.launch {
             try {
                 val latitude = _latitude.value ?: 0.0
@@ -83,6 +90,11 @@ class HomeViewModel : ViewModel() {
 
     fun updateSelectedRange(range: Float) {
         _selectedRange.value = range
+        // Aktualizuj wartość zasięgu w SharedPreferences
+        appContext.getSharedPreferences("RangeSelectorPrefs", Context.MODE_PRIVATE)
+            .edit()
+            .putFloat("lastSelectedRange", range)
+            .apply()
         fetchDataFromApi()
     }
 
