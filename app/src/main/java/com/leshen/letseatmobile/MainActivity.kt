@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         binding?.bottomNavigationView?.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.home -> replaceFragment(Home())
+                R.id.favourites -> replaceFragment(Favourites())
                 R.id.profile -> replaceFragment(Profile())
             }
             true

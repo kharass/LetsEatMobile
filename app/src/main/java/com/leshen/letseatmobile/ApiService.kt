@@ -4,6 +4,7 @@ import com.leshen.letseatmobile.restaurantList.RestaurantListModel
 import com.leshen.letseatmobile.restaurantPanel.RestaurantPanelModel
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -22,4 +23,17 @@ interface ApiService {
 
     @POST("/api/reviews")
     suspend fun submitReview(@Body requestBody: okhttp3.RequestBody): Response<Any>
+
+    @GET("/api/restaurants/favorite/search")
+    suspend fun getFavoriteRestaurants(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("radius") radius: Float
+    ): List<RestaurantListModel>
+
+    @POST("/api/restaurants/{restaurantId}/favorite")
+    suspend fun addToFavorites(@Path("restaurantId") restaurantId: Long): Response<Unit>
+
+    @DELETE("/api/restaurants/{restaurantId}/favorite")
+    suspend fun removeFromFavorites(@Path("restaurantId") restaurantId: Long): Response<Unit>
 }

@@ -25,20 +25,18 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.leshen.letseatmobile.databinding.FragmentHomeBinding
+import com.leshen.letseatmobile.databinding.FragmentFavouritesBinding
 import com.leshen.letseatmobile.restaurantList.RestaurantListModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Locale
 
-class Home : Fragment() {
+class Favourites : Fragment() {
 
-    private lateinit var filterLayoutHome: LinearLayout
+    private lateinit var filterLayoutFavourites: LinearLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: RestaurantListAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -46,9 +44,10 @@ class Home : Fragment() {
     private var selectedCategory: String? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel: FavouritesViewModel by viewModels()
 
-    private var _binding: FragmentHomeBinding? = null
+    private var _binding: FragmentFavouritesBinding? = null
+
     private val binding get() = _binding!!
 
     private lateinit var locationUpdateReceiver: BroadcastReceiver
@@ -62,9 +61,9 @@ class Home : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentFavouritesBinding.inflate(inflater, container, false)
         val view = binding.root
-        recyclerView = binding.recyclerView
+        recyclerView = binding.favouritesRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val itemClickListener = object : RestaurantListAdapter.OnItemClickListener {
@@ -75,7 +74,6 @@ class Home : Fragment() {
                 Log.d("distance", restaurantModel.distance)
                 startActivity(intent)
             }
-
 
             val apiService = Retrofit.Builder()
                 .baseUrl("http://192.168.0.2:8010/")
@@ -131,14 +129,14 @@ class Home : Fragment() {
         adapter = RestaurantListAdapter(emptyList(), emptyList(), requireContext(), itemClickListener)
         recyclerView.adapter = adapter
 
-        filterLayoutHome = binding.filterLayoutHome
-        swipeRefreshLayout = binding.swipeRefreshLayout
-        locationButton = binding.locationButton
+        filterLayoutFavourites = binding.filterLayoutFavourites
+        swipeRefreshLayout = binding.swipeRefreshLayoutFavourites
+        locationButton = binding.locationButtonFavourites
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
         swipeRefreshLayout.setOnRefreshListener {
-            viewModel.fetchDataFromApi()
+            viewModel.fetchFavoriteRestaurants()
             updateLocationButton()
         }
 
@@ -146,7 +144,6 @@ class Home : Fragment() {
             checkLocationPermission()
             showRangeSelectorDialog()
         }
-
 
         locationUpdateReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -184,7 +181,7 @@ class Home : Fragment() {
     }
 
     private fun generateCategoryButtons(categories: List<String>) {
-        filterLayoutHome.removeAllViews()
+        filterLayoutFavourites.removeAllViews()
 
         for (category in categories) {
             val button = Button(requireContext())
@@ -192,7 +189,7 @@ class Home : Fragment() {
             button.setOnClickListener {
                 toggleCategoryButton(category)
             }
-            filterLayoutHome.addView(button)
+            filterLayoutFavourites.addView(button)
         }
     }
 
@@ -256,8 +253,9 @@ class Home : Fragment() {
         })
         rangeSelectorDialog.show(parentFragmentManager, "RangeSelectorDialog")
     }
+
     private fun onLocationUpdate() {
-        viewModel.fetchDataFromApi()
+        viewModel.fetchFavoriteRestaurants()
         updateLocationButton()
     }
 
