@@ -101,7 +101,6 @@ class RestaurantPanelActivity : AppCompatActivity() {
         val restaurantNameTextView: TextView = findViewById(R.id.restaurantPanelRestaurantName)
         restaurantNameTextView.text = restaurant.restaurantName
         val starTextView: TextView = findViewById(R.id.restaurantPanelRestaurantStar)
-        Log.d("restaurantStars",intent.getIntExtra("stars",0).toString())
         if (restaurant.stars == 0.0) {
             starTextView.text = "brak ocen"
         } else {

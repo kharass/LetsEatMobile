@@ -10,5 +10,6 @@ data class RestaurantListModel(
     val restaurantName: String,
     val distance:String,
     val stars: Double,
-    val tables: List<Table>
+    val tables: List<Table>,
+    var isFavorite: Boolean
 )
