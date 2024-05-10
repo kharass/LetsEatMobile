@@ -94,9 +94,11 @@ dependencies {
     androidTestImplementation ("androidx.test.ext:junit:1.1.5")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("com.adevinta.android:barista:4.2.0")
+    androidTestImplementation("org.hamcrest:hamcrest-library:2.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation ("androidx.arch.core:core-testing:2.2.0")
     testImplementation ("org.robolectric:robolectric:4.11.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
 
 
     api("androidx.activity:activity-compose:1.8.2")
@@ -107,5 +109,4 @@ dependencies {
 
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.okhttp3:okhttp:4.12.0")
-
 }

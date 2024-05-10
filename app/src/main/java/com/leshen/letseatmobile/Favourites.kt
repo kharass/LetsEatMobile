@@ -27,6 +27,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.leshen.letseatmobile.databinding.FragmentFavouritesBinding
 import com.leshen.letseatmobile.restaurantList.RestaurantListModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -75,11 +76,6 @@ class Favourites : Fragment() {
                 startActivity(intent)
             }
 
-            val apiService = Retrofit.Builder()
-                .baseUrl("http://192.168.0.2:8010/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(ApiService::class.java)
 
             override fun onFavoriteButtonClick(restaurantId: Int, isFavorite: Boolean) {
                 if (!isFavorite) {
@@ -89,41 +85,6 @@ class Favourites : Fragment() {
                 }
             }
 
-
-            private fun addToFavorites(restaurantId: Int) {
-                GlobalScope.launch(Dispatchers.Main) {
-                    try {
-                        val response = apiService.addToFavorites(restaurantId.toLong())
-                        if (response.isSuccessful) {
-                            showToast("Restaurant added to favorites")
-                        } else {
-                            showToast("Failed to add restaurant to favorites")
-                        }
-                    } catch (e: Exception) {
-                        showToast("Network error occurred")
-                    }
-                }
-            }
-
-            private fun removeFromFavorites(restaurantId: Int) {
-                GlobalScope.launch(Dispatchers.Main) {
-                    try {
-                        val response = apiService.removeFromFavorites(restaurantId.toLong())
-                        if (response.isSuccessful) {
-                            showToast("Restaurant removed from favorites")
-                        } else {
-                            showToast("Failed to remove restaurant from favorites")
-                        }
-                    } catch (e: Exception) {
-                        showToast("Network error occurred")
-                    }
-                }
-            }
-
-
-            private fun showToast(message: String) {
-                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-            }
         }
 
         adapter = RestaurantListAdapter(emptyList(), emptyList(), requireContext(), itemClickListener)
@@ -264,4 +225,52 @@ class Favourites : Fragment() {
         requireContext().unregisterReceiver(locationUpdateReceiver)
         _binding = null
     }
+
+    fun addToFavorites(restaurantId: Int, dispatcher: CoroutineDispatcher = Dispatchers.Main) {
+        GlobalScope.launch(dispatcher) {
+            try {
+                val response = apiService.addToFavorites(restaurantId.toLong())
+                if (response.isSuccessful) {
+                    showToast("Restaurant added to favorites")
+                } else {
+                    showToast("Failed to add restaurant to favorites")
+                }
+            } catch (e: Exception) {
+                showToast("Network error occurred")
+            }
+        }
+    }
+
+
+    fun removeFromFavorites(restaurantId: Int) {
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val response = apiService.removeFromFavorites(restaurantId.toLong())
+                if (response.isSuccessful) {
+                    showToast("Restaurant removed from favorites")
+                } else {
+                    showToast("Failed to remove restaurant from favorites")
+                }
+            } catch (e: Exception) {
+                showToast("Network error occurred")
+            }
+        }
+    }
+
+    var showToastCalled: Boolean = false
+    var showToastMessage: String? = null
+
+    fun showToast(message: String) {
+        showToastCalled = true
+        showToastMessage = message
+        if (isAdded && context != null) {
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val apiService = Retrofit.Builder()
+        .baseUrl("http://192.168.0.2:8010/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(ApiService::class.java)
 }

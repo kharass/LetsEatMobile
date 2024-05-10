@@ -124,8 +124,12 @@ class Home : Fragment() {
 
 
             private fun showToast(message: String) {
-                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                // Sprawdź czy fragment jest przypięty do kontekstu przed wyświetleniem komunikatu toast
+                if (isAdded && context != null) {
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                }
             }
+
         }
 
         adapter = RestaurantListAdapter(emptyList(), emptyList(), requireContext(), itemClickListener)
