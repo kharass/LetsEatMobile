@@ -62,7 +62,7 @@ class FavouritesViewModel(application: Application) : AndroidViewModel(applicati
                     .build()
 
                 val apiService = Retrofit.Builder()
-                    .baseUrl("http://192.168.0.2:8010/")
+                    .baseUrl("http://172.19.240.156:8010/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build()
@@ -93,7 +93,6 @@ class FavouritesViewModel(application: Application) : AndroidViewModel(applicati
 
     fun updateSelectedRange(range: Float) {
         _selectedRange.value = range
-        // Aktualizuj wartość zasięgu w SharedPreferences
         appContext.getSharedPreferences("RangeSelectorPrefs", Context.MODE_PRIVATE)
             .edit()
             .putFloat("lastSelectedRange", range)

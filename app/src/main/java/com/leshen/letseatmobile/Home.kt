@@ -78,7 +78,7 @@ class Home : Fragment() {
 
 
             val apiService = Retrofit.Builder()
-                .baseUrl("http://192.168.0.2:8010/")
+                .baseUrl("http://172.19.240.156:8010/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ApiService::class.java)
@@ -124,7 +124,6 @@ class Home : Fragment() {
 
 
             private fun showToast(message: String) {
-                // Sprawdź czy fragment jest przypięty do kontekstu przed wyświetleniem komunikatu toast
                 if (isAdded && context != null) {
                     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                 }

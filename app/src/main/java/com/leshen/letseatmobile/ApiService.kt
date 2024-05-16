@@ -1,6 +1,7 @@
 package com.leshen.letseatmobile
 
 import com.leshen.letseatmobile.restaurantList.RestaurantListModel
+import com.leshen.letseatmobile.restaurantList.Table
 import com.leshen.letseatmobile.restaurantPanel.RestaurantPanelModel
 import retrofit2.Response
 import retrofit2.http.Body
@@ -36,4 +37,13 @@ interface ApiService {
 
     @DELETE("/api/restaurants/{restaurantId}/favorite")
     suspend fun removeFromFavorites(@Path("restaurantId") restaurantId: Long): Response<Unit>
+
+    @GET("/api/tables/restaurant/{restaurantId}")
+    suspend fun getTablesForRestaurant(@Path("restaurantId") restaurantId: Long): List<Table>
+
+    @DELETE("/api/tables/{restaurantId}/{tableId}")
+    suspend fun removeTableFromRestaurant(
+        @Path("restaurantId") restaurantId: Long,
+        @Path("tableId") tableId: Long
+    ): Response<Unit>
 }
