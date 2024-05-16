@@ -20,18 +20,29 @@ import com.leshen.letseatmobile.restaurantPanel.RestaurantPanelModel
 import kotlinx.coroutines.launch
 import android.content.Intent
 import android.net.Uri
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.leshen.letseatmobile.restaurantList.TablesAdapter
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
 class RestaurantPanelActivity : AppCompatActivity() {
 
     private lateinit var restaurantPanelViewModel: RestaurantPanelViewModel
+    private lateinit var alertDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         setContentView(R.layout.activity_restaurant_panel)
+
         val addOpinionButton = findViewById<Button>(R.id.restaurantAddOpinion)
         addOpinionButton.setOnClickListener {
             showReviewDialog()
         }
+
         val restaurantId = intent.getIntExtra("restaurantId", -1)
         restaurantPanelViewModel = ViewModelProvider(this).get(RestaurantPanelViewModel::class.java)
 
@@ -42,6 +53,7 @@ class RestaurantPanelActivity : AppCompatActivity() {
         restaurantPanelViewModel.errorMessage.observe(this) { errorMessage ->
             Log.d("PanelError", errorMessage)
         }
+
         if (restaurantPanelViewModel.restaurantData.value == null) {
             lifecycleScope.launch {
                 restaurantPanelViewModel.fetchDataFromApi(restaurantId)
@@ -52,10 +64,16 @@ class RestaurantPanelActivity : AppCompatActivity() {
         returnButton.setOnClickListener {
             finish()
         }
+
+        val addReservationButton = findViewById<Button>(R.id.restaurantAddReservation)
+        addReservationButton.setOnClickListener {
+            showReservationDialog(restaurantId)
+        }
     }
+
     private fun showReviewDialog() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_review_form, null)
-        val alertDialog = AlertDialog.Builder(this)
+        alertDialog = AlertDialog.Builder(this)
             .setView(dialogView)
             .setTitle("Add Review")
             .setCancelable(true)
@@ -96,16 +114,71 @@ class RestaurantPanelActivity : AppCompatActivity() {
 
         alertDialog.show()
     }
-    private fun updateUI(restaurant: RestaurantPanelModel) {
 
+    private fun showReservationDialog(restaurantId: Int) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_reservation_form, null)
+        alertDialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setTitle("Add Reservation")
+            .setCancelable(true)
+            .create()
+
+        val tablesRecyclerView = dialogView.findViewById<RecyclerView>(R.id.tablesRecyclerView)
+        tablesRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        val loggingInterceptor = HttpLoggingInterceptor { message ->
+            Log.d("HTTP_LOG", message)
+        }
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
+        val client = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
+
+        val apiService = Retrofit.Builder()
+            .baseUrl("http://172.19.240.156:8010/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+            .create(ApiService::class.java)
+
+        lifecycleScope.launch {
+            try {
+                val tables = apiService.getTablesForRestaurant(restaurantId.toLong())
+                val tablesAdapter = TablesAdapter(tables) { table ->
+                    removeTable(apiService, restaurantId, table.tableId.toLong())
+                }
+                tablesRecyclerView.adapter = tablesAdapter
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        alertDialog.show()
+    }
+
+    private fun removeTable(apiService: ApiService, restaurantId: Int, tableId: Long) {
+        lifecycleScope.launch {
+            try {
+                val response = apiService.removeTableFromRestaurant(restaurantId.toLong(), tableId)
+                if (response.isSuccessful) {
+                    alertDialog.dismiss()
+                    Toast.makeText(this@RestaurantPanelActivity, "Reservation made successfully", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@RestaurantPanelActivity, "Failed to make reservation", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(this@RestaurantPanelActivity, "Error occurred while making reservation", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun updateUI(restaurant: RestaurantPanelModel) {
         val restaurantNameTextView: TextView = findViewById(R.id.restaurantPanelRestaurantName)
         restaurantNameTextView.text = restaurant.restaurantName
         val starTextView: TextView = findViewById(R.id.restaurantPanelRestaurantStar)
-        if (restaurant.stars == 0.0) {
-            starTextView.text = "brak ocen"
-        } else {
-            starTextView.text = restaurant.stars.toString()
-        }
+        starTextView.text = if (restaurant.stars == 0.0) "brak ocen" else restaurant.stars.toString()
 
         val distanceTextView: TextView = findViewById(R.id.restaurantPanelRestaurantDistance)
         distanceTextView.text = intent.getStringExtra("distance")
@@ -129,28 +202,17 @@ class RestaurantPanelActivity : AppCompatActivity() {
         }
 
         val menuTextView: TextView = findViewById(R.id.restaurantPanelMenu)
-        menuTextView.text = restaurant.menu?.joinToString("\n") { it.name +" "+ it.price.toString()+" zł"} ?: "brak menu"
+        menuTextView.text = restaurant.menu?.joinToString("\n") { it.name + " " + it.price.toString() + " zł" } ?: "brak menu"
 
         val foodTextView: TextView = findViewById(R.id.restaurantPanelFood)
-        if (restaurant.averageFood == 0.0) {
-            foodTextView.text = "brak ocen"
-        } else {
-            foodTextView.text = "Jedzenie: ${restaurant.averageFood} / 5"
-        }
+        foodTextView.text = if (restaurant.averageFood == 0.0) "brak ocen" else "Jedzenie: ${restaurant.averageFood} / 5"
 
         val atmosphereTextView: TextView = findViewById(R.id.restaurantPanelAtmosphere)
-        if (restaurant.averageAtmosphere == 0.0) {
-            atmosphereTextView.text = "brak ocen"
-        } else {
-            atmosphereTextView.text = "Atmosfera: ${restaurant.averageAtmosphere} / 5"
-        }
+        atmosphereTextView.text = if (restaurant.averageAtmosphere == 0.0) "brak ocen" else "Atmosfera: ${restaurant.averageAtmosphere} / 5"
 
         val serviceTextView: TextView = findViewById(R.id.restaurantPanelService)
-        if (restaurant.averageService == 0.0) {
-            serviceTextView.text = "brak ocen"
-        } else {
-            serviceTextView.text = "Obsługa: ${restaurant.averageService} / 5"
-        }
+        serviceTextView.text = if (restaurant.averageService == 0.0) "brak ocen" else "Obsługa: ${restaurant.averageService} / 5"
+
         val opinions: TextView = findViewById(R.id.restaurantPanelOpinion)
         opinions.text = restaurant.reviews?.joinToString("\n") {
             val averageRating = ((it.food + it.atmosphere + it.service) / 3.0)
@@ -166,6 +228,7 @@ class RestaurantPanelActivity : AppCompatActivity() {
             .centerCrop()
             .into(restaurantImageView)
     }
+
     private fun openMapWithAddress(address: String) {
         val gmmIntentUri = Uri.parse("geo:0,0?q=$address")
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
@@ -177,6 +240,7 @@ class RestaurantPanelActivity : AppCompatActivity() {
             Toast.makeText(this, "Google Maps is not installed", Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun openWebsite(webaddress: String) {
         if (webaddress.isNotEmpty()) {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webaddress))

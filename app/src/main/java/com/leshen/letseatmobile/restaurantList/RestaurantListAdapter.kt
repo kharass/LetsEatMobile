@@ -1,6 +1,7 @@
 package com.leshen.letseatmobile
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.leshen.letseatmobile.R
 import com.leshen.letseatmobile.restaurantList.RestaurantListModel
+import com.leshen.letseatmobile.restaurantList.Table
 
 class RestaurantListAdapter(
     var restaurantList: List<RestaurantListModel>,
@@ -19,9 +21,12 @@ class RestaurantListAdapter(
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<RestaurantListAdapter.ViewHolder>() {
 
+    private val sizeCountMap = mutableMapOf<Int, Int>()
+
     fun updateData(newList: List<RestaurantListModel>?) {
         restaurantList = newList ?: emptyList()
         filteredList = restaurantList
+        countTableSizes()
         notifyDataSetChanged()
     }
 
@@ -39,12 +44,24 @@ class RestaurantListAdapter(
         notifyDataSetChanged()
     }
 
+    private fun countTableSizes() {
+        sizeCountMap.clear()
+
+        filteredList.forEach { restaurant ->
+            restaurant.tables?.forEach { table ->
+                val size = table.size
+                sizeCountMap[size] = sizeCountMap.getOrDefault(size, 0) + 1
+            }
+        }
+    }
+
     interface OnItemClickListener {
         fun onItemClick(restaurantListModel: RestaurantListModel)
         fun onFavoriteButtonClick(restaurantId: Int, isFavorite: Boolean)
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val tablesTextView: TextView = itemView.findViewById(R.id.listRestaurantTables)
         val favoriteButton: ImageButton = itemView.findViewById(R.id.listFavoriteButton)
         val nameTextView: TextView = itemView.findViewById(R.id.listRestaurantName)
         val restaurantPictureImageView: ImageView = itemView.findViewById(R.id.listRestaurantPicture)
@@ -75,6 +92,10 @@ class RestaurantListAdapter(
             holder.starTextView.text = restaurant.stars.toString()
         }
 
+        Log.d("restaurant.table", restaurant.tables?.toString() ?: "tables is null")
+        val sizeText = generateSizeText(restaurant.tables.orEmpty())
+        holder.tablesTextView.text = sizeText
+
         Glide.with(holder.itemView.context)
             .load(restaurant.photoLink)
             .placeholder(R.drawable.template_restauracja)
@@ -82,21 +103,33 @@ class RestaurantListAdapter(
             .centerCrop()
             .into(holder.restaurantPictureImageView)
 
-        // Ustawienie odpowiedniego obrazka na przycisku ulubionych w zależności od statusu ulubionego
         holder.favoriteButton.setImageResource(if (restaurant.isFavorite) R.drawable.baseline_favorite_24 else R.drawable.baseline_favorite_border_24)
 
-        // Obsługa kliknięcia na przycisk ulubionych
         holder.favoriteButton.setOnClickListener {
-            // Odwrócenie statusu ulubionego
             val newFavoriteStatus = !restaurant.isFavorite
-            // Aktualizacja obrazka na przycisku ulubionych
             holder.favoriteButton.setImageResource(if (newFavoriteStatus) R.drawable.baseline_favorite_24 else R.drawable.baseline_favorite_border_24)
-            // Wywołanie funkcji interfejsu onItemClick z nowym statusem ulubionego
             itemClickListener.onFavoriteButtonClick(restaurant.restaurantId, newFavoriteStatus)
         }
     }
 
     override fun getItemCount(): Int {
         return filteredList.size
+    }
+
+    private fun generateSizeText(tableModels: List<Table>?): String {
+        if (tableModels.isNullOrEmpty()) {
+            return "Brak stolików"
+        }
+
+        val sizeCountMap = mutableMapOf<Int, Int>()
+
+        tableModels.forEach { table ->
+            val size = table.size
+            sizeCountMap[size] = sizeCountMap.getOrDefault(size, 0) + 1
+        }
+
+        return sizeCountMap.entries.joinToString("\n") { (size, count) ->
+            "$count stolik/i ($size os.)"
+        }
     }
 }

@@ -35,7 +35,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     init {
         updateLatitude(0.0)
         updateLongitude(0.0)
-        // Odczytaj ostatnio wybraną wartość zasięgu z SharedPreferences
         val sharedPreferences = appContext.getSharedPreferences("RangeSelectorPrefs", Context.MODE_PRIVATE)
         val lastSelectedRange = sharedPreferences.getFloat("lastSelectedRange", 1.0f)
         _selectedRange.value = lastSelectedRange
@@ -59,7 +58,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     .build()
 
                 val apiService = Retrofit.Builder()
-                    .baseUrl("http://192.168.0.2:8010/")
+                    .baseUrl("http://172.19.240.156:8010/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build()
@@ -89,7 +88,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     fun updateSelectedRange(range: Float) {
         _selectedRange.value = range
-        // Aktualizuj wartość zasięgu w SharedPreferences
         appContext.getSharedPreferences("RangeSelectorPrefs", Context.MODE_PRIVATE)
             .edit()
             .putFloat("lastSelectedRange", range)

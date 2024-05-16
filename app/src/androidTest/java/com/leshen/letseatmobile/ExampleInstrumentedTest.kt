@@ -15,7 +15,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
 import com.google.firebase.auth.FirebaseAuth
+import com.leshen.letseatmobile.CustomViewAction.clickChildViewWithId
 import com.leshen.letseatmobile.login.SignInActivity
+import com.leshen.letseatmobile.restaurantList.TablesAdapter
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -109,6 +111,61 @@ class AddToFavoriteTest {
         Thread.sleep(4000)
 
         onView(withId(R.id.favourites)).perform(click())
+
+        Thread.sleep(4000)
+    }
+}
+
+
+class AddReservationTest {
+
+    @Test
+    fun testMakeReservation() {
+        ActivityScenario.launch(MainActivity::class.java)
+        Thread.sleep(5000)
+
+        onView(withId(R.id.recyclerView))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<RestaurantListAdapter.ViewHolder>(
+                    0,
+                    clickChildViewWithId(R.id.listCardView)
+                )
+            )
+
+        Thread.sleep(4000)
+
+        onView(withId(R.id.restaurantAddReservation))
+            .perform(click())
+
+        Thread.sleep(3000)
+
+        onView(withId(R.id.tablesRecyclerView))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<TablesAdapter.TableViewHolder>(
+                    0,
+                    clickChildViewWithId(R.id.buttonTable)
+                )
+            )
+
+        Thread.sleep(4000)
+
+        onView(withId(R.id.restaurantPanelReturnButton))
+            .perform(click())
+
+        Thread.sleep(4000)
+
+        onView(withId(R.id.recyclerView))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<RestaurantListAdapter.ViewHolder>(
+                    0,
+                    clickChildViewWithId(R.id.listCardView)
+                )
+            )
+
+        Thread.sleep(4000)
+
+        onView(withId(R.id.restaurantAddReservation))
+            .perform(click())
 
         Thread.sleep(4000)
     }
