@@ -269,7 +269,7 @@ class Favourites : Fragment() {
     }
 
     val apiService = Retrofit.Builder()
-        .baseUrl("http://172.19.240.156:8010/")
+        .baseUrl("http://192.168.0.3:8010/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(ApiService::class.java)

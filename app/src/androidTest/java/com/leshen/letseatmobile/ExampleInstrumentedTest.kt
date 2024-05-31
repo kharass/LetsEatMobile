@@ -124,6 +124,14 @@ class AddReservationTest {
         ActivityScenario.launch(MainActivity::class.java)
         Thread.sleep(5000)
 
+        onView(withId(R.id.reservation)).perform(click())
+
+        Thread.sleep(2000)
+
+        onView(withId(R.id.home)).perform(click())
+
+        Thread.sleep(2000)
+
         onView(withId(R.id.recyclerView))
             .perform(
                 RecyclerViewActions.actionOnItemAtPosition<RestaurantListAdapter.ViewHolder>(
@@ -131,6 +139,7 @@ class AddReservationTest {
                     clickChildViewWithId(R.id.listCardView)
                 )
             )
+
 
         Thread.sleep(4000)
 
@@ -152,22 +161,41 @@ class AddReservationTest {
         onView(withId(R.id.restaurantPanelReturnButton))
             .perform(click())
 
+        Thread.sleep(3000)
+
+        onView(withId(R.id.reservation)).perform(click())
+
         Thread.sleep(4000)
+
+    }
+}
+
+
+class CancelReservationTest {
+
+    @Test
+    fun testCancelReservation() {
+        ActivityScenario.launch(MainActivity::class.java)
+        Thread.sleep(5000)
+
+        onView(withId(R.id.reservation)).perform(click())
+
+        Thread.sleep(3000)
 
         onView(withId(R.id.recyclerView))
             .perform(
-                RecyclerViewActions.actionOnItemAtPosition<RestaurantListAdapter.ViewHolder>(
+                RecyclerViewActions.actionOnItemAtPosition<TablesAdapter.TableViewHolder>(
                     0,
-                    clickChildViewWithId(R.id.listCardView)
+                    clickChildViewWithId(R.id.CancelButton)
                 )
             )
 
-        Thread.sleep(4000)
+        Thread.sleep(3000)
 
-        onView(withId(R.id.restaurantAddReservation))
-            .perform(click())
+        onView(withId(R.id.home)).perform(click())
 
-        Thread.sleep(4000)
+        Thread.sleep(3000)
+
     }
 }
 

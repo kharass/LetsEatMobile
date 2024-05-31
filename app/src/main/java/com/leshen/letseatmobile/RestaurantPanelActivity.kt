@@ -20,8 +20,12 @@ import com.leshen.letseatmobile.restaurantPanel.RestaurantPanelModel
 import kotlinx.coroutines.launch
 import android.content.Intent
 import android.net.Uri
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.leshen.letseatmobile.location.LocationService.Companion.TAG
+import com.leshen.letseatmobile.reservationPanel.ReservationDTO
+import com.leshen.letseatmobile.reservationPanel.ReservedTable
 import com.leshen.letseatmobile.restaurantList.TablesAdapter
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -136,7 +140,7 @@ class RestaurantPanelActivity : AppCompatActivity() {
             .build()
 
         val apiService = Retrofit.Builder()
-            .baseUrl("http://172.19.240.156:8010/")
+            .baseUrl("http://192.168.0.3:8010/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
@@ -146,7 +150,7 @@ class RestaurantPanelActivity : AppCompatActivity() {
             try {
                 val tables = apiService.getTablesForRestaurant(restaurantId.toLong())
                 val tablesAdapter = TablesAdapter(tables) { table ->
-                    removeTable(apiService, restaurantId, table.tableId.toLong())
+                    removeTable(apiService, restaurantId.toLong(), table.tableId.toLong(), table.token, table.size)
                 }
                 tablesRecyclerView.adapter = tablesAdapter
             } catch (e: Exception) {
@@ -157,22 +161,73 @@ class RestaurantPanelActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    private fun removeTable(apiService: ApiService, restaurantId: Int, tableId: Long) {
+
+    private fun removeTable(apiService: ApiService, restaurantId: Long, tableId: Long, token: String, size: Int) {
+        var reservationId: Long?
+        var reservedTableId: Long?
         lifecycleScope.launch {
             try {
-                val response = apiService.removeTableFromRestaurant(restaurantId.toLong(), tableId)
-                if (response.isSuccessful) {
-                    alertDialog.dismiss()
-                    Toast.makeText(this@RestaurantPanelActivity, "Reservation made successfully", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this@RestaurantPanelActivity, "Failed to make reservation", Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "Starting removeTable function")
+
+                // Add reservation
+                Log.d(TAG, "Adding reservation")
+                val reservationResponse = apiService.addReservation(ReservationDTO(restaurantId))
+                if (!reservationResponse.isSuccessful) {
+                    showToast("Failed to create reservation")
+                    Log.e(TAG, "Failed to create reservation: ${reservationResponse.code()}")
+                    return@launch
                 }
+                reservationId = reservationResponse.body()
+                Log.d(TAG, "Reservation created: $reservationId")
+
+                // Add reserved table
+                Log.d(TAG, "Adding reserved table")
+                val tableResponse = apiService.addReservedTable(ReservedTable(tableId, restaurantId, token, size))
+                if (!tableResponse.isSuccessful) {
+                    showToast("Failed to reserve table")
+                    Log.e(TAG, "Failed to reserve table: ${tableResponse.code()}")
+                    return@launch
+                }
+                reservedTableId = tableResponse.body()
+                Log.d(TAG, "Reserved table created: $reservedTableId")
+
+//                 Assign table to reservation
+                Log.d(TAG, "Assigning table to reservation")
+                val assignTableResponse = apiService.addTableToReservation(reservationId!!, reservedTableId!!)
+                if (!assignTableResponse.isSuccessful) {
+                    showToast("Failed to assign table to reservation")
+                    Log.e(TAG, "Failed to assign table to reservation: ${assignTableResponse.code()}")
+                    return@launch
+                }
+                Log.d(TAG, "Table assigned to reservation")
+
+                // Remove table from restaurant
+                Log.d(TAG, "Removing table from restaurant")
+                val removeTableResponse = apiService.removeTableFromRestaurant(restaurantId, tableId)
+                alertDialog.dismiss()
+                if (!removeTableResponse.isSuccessful) {
+                    showToast("Failed to remove table from restaurant")
+                    Log.e(TAG, "Failed to remove table from restaurant: ${removeTableResponse.code()}")
+                    return@launch
+                }
+                Log.d(TAG, "Table removed from restaurant")
+
+                // All operations successful
+                alertDialog.dismiss()
+                Toast.makeText(this@RestaurantPanelActivity, "Reservation made successfully", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(this@RestaurantPanelActivity, "Error occurred while making reservation", Toast.LENGTH_SHORT).show()
+                showToast("Error occurred while making reservation")
+                Log.e(TAG, "Error occurred while making reservation: ${e.message}")
             }
         }
     }
+
+
+    private fun showToast(message: String) {
+        Toast.makeText(this@RestaurantPanelActivity, message, Toast.LENGTH_SHORT).show()
+    }
+
 
     private fun updateUI(restaurant: RestaurantPanelModel) {
         val restaurantNameTextView: TextView = findViewById(R.id.restaurantPanelRestaurantName)

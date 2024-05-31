@@ -89,12 +89,15 @@ dependencies {
     implementation ("de.hdodenhof:circleimageview:3.1.0")
 
     implementation ("com.firebaseui:firebase-ui-storage:8.0.2")
+    implementation("androidx.test:core-ktx:1.5.0")
 
     testImplementation ("junit:junit:4.13.2")
     androidTestImplementation ("androidx.test.ext:junit:1.1.5")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("com.adevinta.android:barista:4.2.0")
     androidTestImplementation("org.hamcrest:hamcrest-library:2.2")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
+
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation ("androidx.arch.core:core-testing:2.2.0")
     testImplementation ("org.robolectric:robolectric:4.11.1")

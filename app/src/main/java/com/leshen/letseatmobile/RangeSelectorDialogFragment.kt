@@ -77,7 +77,6 @@ class RangeSelectorDialogFragment : DialogFragment() {
         })
 
         buttonApply.setOnClickListener {
-            // Handle button click if needed
         }
 
         return dialog

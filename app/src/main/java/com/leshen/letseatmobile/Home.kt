@@ -30,8 +30,6 @@ import com.leshen.letseatmobile.restaurantList.RestaurantListModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Locale
@@ -78,7 +76,7 @@ class Home : Fragment() {
 
 
             val apiService = Retrofit.Builder()
-                .baseUrl("http://172.19.240.156:8010/")
+                .baseUrl("http://192.168.0.3:8010/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ApiService::class.java)

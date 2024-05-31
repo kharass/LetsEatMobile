@@ -1,5 +1,7 @@
 package com.leshen.letseatmobile
 
+import com.leshen.letseatmobile.reservationPanel.ReservationDTO
+import com.leshen.letseatmobile.reservationPanel.ReservedTable
 import com.leshen.letseatmobile.restaurantList.RestaurantListModel
 import com.leshen.letseatmobile.restaurantList.Table
 import com.leshen.letseatmobile.restaurantPanel.RestaurantPanelModel
@@ -46,4 +48,31 @@ interface ApiService {
         @Path("restaurantId") restaurantId: Long,
         @Path("tableId") tableId: Long
     ): Response<Unit>
+
+
+
+    @POST("/api/reservations")
+    suspend fun addReservation(@Body reservationDto: ReservationDTO): Response<Long>
+
+    @DELETE("/api/reservations/{id}")
+    suspend fun deleteReservation(@Path("id") reservationId: Long): Response<Void>
+
+    @GET("/api/reservations")
+    suspend fun getReservations(): Response<List<ReservationDTO>>
+
+    @POST("/api/reservedTables")
+    suspend fun addReservedTable(@Body reservedTableDto: ReservedTable): Response<Long>
+
+    @POST("/api/reservedTables/addExistingToReservation/{reservationId}/{tableId}")
+    suspend fun addTableToReservation(
+        @Path("reservationId") reservationId: Long,
+        @Path("tableId") tableId: Long
+    ): Response<ReservedTable>
+
+
+    @POST("/api/tables")
+    suspend fun addTable(@Body tableDto: Table): Response<Long>
+
+    @GET("/api/restaurants")
+    suspend fun getRestaurantList(): Response<List<RestaurantListModel>>
 }
